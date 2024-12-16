@@ -1,0 +1,72 @@
+import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
+
+
+class RandomWalkPageRank:
+    '''
+    PageRank implementation with the use of the Random Walk method.
+    '''
+
+    def __init__(self, graph, p=0.85, steps=1000):
+        '''
+        Initializes the PageRank algorithm with the use of the Random Walk method.
+
+        :param graph: Instance of the Graph class.
+        :param p: Probaility of following a certain hyperlink.
+        :param steps: Number of random walk steps.        
+        '''
+        
+        self.graph = graph
+        self.p = p
+        self.steps = steps
+        self.page_rank = None
+
+
+    def compute_pagerank(self):
+        '''
+        Execute the random walk and compute the PageRank for each vertex.
+        '''
+
+        # Get the vertices and initialize the visit counts with the use of Graph method.
+        vertices = list(self.graph.get_vertices())
+        # Dictionary to keep track of visits.
+        visits = {v: 0 for v in vertices}
+        rng = np.random.default_rng()
+
+        # Start the random walk.
+        current_vertex = rng.choice(vertices)
+        visits[current_vertex] += 1
+
+        for _ in range(self.steps - 1):
+            # Set a random number to decide between either a hyperlink or a random jump.
+            a = rng.random()
+            if a < self.p:
+                # If there are neighbors, then follow a hyperlink.
+                neighbors = [j for i, j in enumerate(vertices) if (i, j) in self.graph.get_edges() or (j, i) in self.graph.get_edges()]
+                if neighbors:
+                    current_vertex = rng.choice(neighbors)
+                else:
+                    # If there are no neighbors, then jump to a random vertex.
+                    current_vertex = rng.choice(vertices)
+            else:
+                # Jump to a random vertex.
+                current_vertex = rng.choice(vertices)
+
+            # Update visits.
+            visits[current_vertex] += 1
+
+        # To get the probabilities, normalize the visits.
+        total_visits = sum(visits.values())
+        self.page_rank = {v: count / total_visits for v, count in visits.items()}
+        return self.page_rank
+
+
+    def get_pagerank(self):
+        '''
+        Get the PageRank values.
+        '''
+        if self.page_rank is None:
+            raise ValueError('PageRank has not been computed. Call compute_pagerank() first.')
+        return self.page_rank
+        
