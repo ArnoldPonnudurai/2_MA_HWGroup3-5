@@ -43,9 +43,9 @@ class RandomWalkPageRank:
             a = rng.random()
             if a < self.p:
                 # If there are neighbors, then follow a hyperlink.
-                neighbors = [j for i, j in enumerate(vertices) if (i, j) in self.graph.get_edges() or (j, i) in self.graph.get_edges()]
-                if neighbors:
-                    current_vertex = rng.choice(neighbors)
+                neighbours = [j for i, j in enumerate(vertices) if (i, j) in self.graph.get_edges() or (j, i) in self.graph.get_edges()]
+                if neighbours:
+                    current_vertex = rng.choice(neighbours)
                 else:
                     # If there are no neighbors, then jump to a random vertex.
                     current_vertex = rng.choice(vertices)
