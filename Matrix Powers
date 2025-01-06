@@ -1,0 +1,52 @@
+class MatrixPowers:
+    
+    def __init__(self, graph, p: float) -> None:
+        self.graph= graph
+        self.p = p 
+        self.n = max(self.graph.get_vertices()) + 1
+        
+        self.M = [[0] * self.n for _ in range(self.n)]
+        Edges = self.graph.get_edges()
+
+        for i,j in Edges: 
+            self.M[i][j] = 1
+        self.M = np.array(self.M)
+
+        self.p = p 
+        self.A = None
+
+    def sum_row(self): 
+        '''
+        '''
+        return np.sum(self.M, axis = 1)
+
+    def matrix(self) -> np.ndarray[int]:
+        '''
+        '''
+        c = self.sum_row()
+        n = max(self.graph.get_vertices()) + 1
+        p = self.p 
+        A = np.zeros((n, n), dtype = int)
+
+        
+
+        for i in range(n):
+            if c[i] > 0:
+                A[i] = p * 1 / c[i] * self.M[i] + (1 - p) / n
+            elif c[i] == 0:
+                A[i] = 1 / n
+
+        self.A = A
+        
+    def PageRank(self):
+        self.matrix()
+
+        x = np.ones((self.n, self.n))
+        d = 1 
+        
+        while d > 1e-6:
+            x_new = np.transpose(self.A) * x
+            d = np.linalg.norm(x_new - x, 1)  
+            x = x_new
+
+        return x
