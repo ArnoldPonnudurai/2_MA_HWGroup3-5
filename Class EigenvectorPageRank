@@ -24,8 +24,14 @@ class EigenvectorPageRank:
         out_degree = np.sum(adjacency_matrix, axis=1)
 
         # Look for nodes with out-degree of zero.
-        adjacency_matrix = np.divide(adjacency_matrix, out_degree[:, None],
-                                     out=np.zeros_like(adjacency_matrix), where=out_degree[:, None] != 0)
+        adjacency_matrix = np.divide(adjacency_matrix, 
+                                     out_degree[:, None],
+                                     out=np.zeros_like(adjacency_matrix), 
+                                     where=out_degree[:, None] != 0)
+
+        # Replace singular nodes.
+        #singular_nodes = (out_degree == 0)
+        #adjacency_matrix[singular_nodes, :] = 1 / z
 
         # Create transition matrix.
         A = self.p * adjacency_matrix + (1 - self.p) / z
@@ -34,7 +40,7 @@ class EigenvectorPageRank:
         eigenvalues, eigenvectors = np.linalg.eig(A.T)
 
         # Determine the eigenvector corresponding to eigenvalue lambda is equal to 1.
-        idx = np.argmax(np.abs(eigenvalues - 1))
+        idx = np.argmin(np.abs(eigenvalues - 1))
         primary_eigenvector = eigenvectors[:, idx].real
 
         # Normalize the eigenvector for the sum to be equal to 1.
