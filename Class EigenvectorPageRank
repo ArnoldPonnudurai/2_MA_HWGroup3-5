@@ -1,0 +1,44 @@
+class EigenvectorPageRank:
+    '''
+    PageRank implementation using Eigenvector and Eigenvalues based methods.
+    '''
+    def __init__(self, graph, p=0.85):
+        '''
+        Initializes the Eigenvector PageRank.
+
+        :param graph: Instance of the Graph class.
+        :param p: Probability.
+        '''
+        self.graph = graph
+        self.p = p
+        self.page_rank = None
+
+    def compute_pagerank(self):
+        '''
+        Compute the PageRank with the Eigenvector Method.
+        '''
+        z = len(self.graph.get_vertices())
+        adjacency_matrix = np.array(self.graph.connectivity_matrix, dtype=float)
+
+        # Calculate the out-degree of every node.
+        out_degree = np.sum(adjacency_matrix, axis=1)
+
+        # Look for nodes with out-degree of zero.
+        adjacency_matrix = np.divide(adjacency_matrix, out_degree[:, None],
+                                     out=np.zeros_like(adjacency_matrix), where=out_degree[:, None] != 0)
+
+        # Create transition matrix.
+        A = self.p * adjacency_matrix + (1 - self.p) / z
+
+        # Determine eigenvalues & eigenvectors.
+        eigenvalues, eigenvectors = np.linalg.eig(A.T)
+
+        # Determine the eigenvector corresponding to eigenvalue lambda is equal to 1.
+        idx = np.argmax(np.abs(eigenvalues - 1))
+        primary_eigenvector = eigenvectors[:, idx].real
+
+        # Normalize the eigenvector for the sum to be equal to 1.
+        primary_eigenvector = np.abs(primary_eigenvector)
+        self.page_rank = primary_eigenvector / np.sum(primary_eigenvector)
+        return self.page_rank
+        
