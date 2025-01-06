@@ -1,0 +1,33 @@
+lass MatrixPowers:
+    
+    def __init__(self, graph, p: float) -> None:
+        self.graph = graph
+        self.p = p
+        self.page_rank = None
+
+        
+    def PageRank(self):
+        n = len(self.graph.get_vertices())
+        adjacency_matrix = np.array(self.graph.connectivity_matrix, dtype=float)
+
+        # Calculate the out-degree of every node.
+        out_degree = np.sum(adjacency_matrix, axis=1)
+
+        # Look for nodes with out-degree of zero.
+        adjacency_matrix = np.divide(adjacency_matrix, out_degree[:, None],
+                                     out=np.zeros_like(adjacency_matrix), where=out_degree[:, None] != 0)
+
+        # Create transition matrix.
+        A = self.p * adjacency_matrix + (1 - self.p) / n
+
+        # Create x0 vector
+        x = np.ones((n)) / n
+        # Set difference variable
+        d = 1
+        
+        while d > 1e-6:
+            x_new = np.transpose(A) @ x
+            d = np.linalg.norm(x_new - x, 1) # Computes difference between x and x_new  
+            x = x_new
+
+        return x
