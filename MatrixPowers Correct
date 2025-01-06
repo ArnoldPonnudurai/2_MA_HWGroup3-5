@@ -1,4 +1,4 @@
-lass MatrixPowers:
+class MatrixPowers:
     
     def __init__(self, graph, p: float) -> None:
         self.graph = graph
