@@ -1,0 +1,5 @@
+    def BarChart(self):
+        plt.figure()
+        plt.bar(np.arange(len(self.PageRank())), self.PageRank())
+        plt.xticks(range(len(self.PageRank())))
+        plt.show()
